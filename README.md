@@ -1,10 +1,14 @@
-# Getting Started with Create React App
+# Getting Started with React Test Project
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
 
 In the project directory, you can run:
+
+### `npm install`
+
+Install node modules.
 
 ### `npm start`
 
@@ -14,33 +18,56 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
-### `npm test`
+### `Contentful CMS`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+In src/Content.tsx file, it gets post data (title, content, author) from Contentful CMS.
 
-### `npm run build`
+If we got error while fetching data from CMS or there is no data, the page will show [Can not get data from Contentful CMS]() text.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+In src/Content.tsx file, there is a query variable (Line 27).
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```code
+const query = `
+{
+  postCollection {
+    items {
+      title
+      author
+      description
+      date
+    }
+  }
+}`;
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+I've created my personal account on Contentful CMS, and published some test data on that CMS.
 
-### `npm run eject`
+With GraphQL API, we can fetch data from the CMS and display on our pages. (Line 43 shows how we fetch data from CMS)
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+You should get spaceId and accessToken from the CMS account.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+In my code, spaceID is `172666ru6dsk`, accessToken is `cCbgOYfI0ZiNooQc8-OJ0RzHjs8oL4LePGcz54QUwH8`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```code
+useEffect(() => {
+    window
+        .fetch(`https://graphql.contentful.com/content/v1/spaces/172666ru6dsk/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer cCbgOYfI0ZiNooQc8-OJ0RzHjs8oL4LePGcz54QUwH8",
+        },
+        body: JSON.stringify({ query }),
+        })
+        .then((response) => response.json())
+        .then(({ data, errors }) => {
+        if (errors) {
+            console.error(errors);
+        }
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+        setPost(data.postCollection.items[0]);
+        });
+}, []);
+```
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+After fetching datas succesfully, it is displayed on our page. (Line 98, 128, 252)
