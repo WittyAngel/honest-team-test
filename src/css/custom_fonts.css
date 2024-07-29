@@ -1,0 +1,19 @@
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.td-pulldown-category,
+.handel-button p {
+  font-family: "GilroyBold", sans-serif !important;
+}
+p,
+body,
+.td-page-content li,
+ul {
+  font-family: "Arial", sans-serif !important;
+}
+.sui-hand-o-right:before {
+  content: "\2022" !important;
+}
